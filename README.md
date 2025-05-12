@@ -15,20 +15,20 @@ Este proyecto implementa la base de datos de un sistema de voto electrónico par
 │   ├── DER.png               # Diagrama Entidad–Relación
 │   └── ModeloRelacional.md   # Modelo relacional derivado
 └── sql/
-├── schema.sql            # DDL: creación de tablas y claves
-└── seed.sql              # Datos de ejemplo para pruebas
+    ├── schema.sql            # DDL: creación de tablas y claves
+    └── seed.sql              # Datos de ejemplo para pruebas
 
 Contenidos principales
-	•	Elector, Padrón_Elección: gestión del registro electoral y control de voto.
-	•	Elección, Candidato, Consulta_Popular, Opción_Respuesta: definición de cargos y referéndums.
-	•	Voto (entidad débil) y subtipos Voto_Elección_Legislativa / Voto_Consulta_Popular: registro anónimo de cada papeleta.
-	•	Mesa_Electoral, Máquina_Votos, Camioneta, Integrantes: organización física y logística de la votación.
-	•	Claves foráneas y tablas asociativas (N:M) para modelar fiscalización y asignación de máquinas.
+- Elector, Padrón_Elección: gestión del registro electoral y control de voto.
+- Elección, Candidato, Consulta_Popular, Opción_Respuesta: definición de cargos y referéndums.
+- Voto (entidad débil) y subtipos Voto_Elección_Legislativa / Voto_Consulta_Popular: registro anónimo de cada papeleta.
+- Mesa_Electoral, Máquina_Votos, Camioneta, Integrantes: organización física y logística de la votación.
+- Claves foráneas y tablas asociativas (N:M) para modelar fiscalización y asignación de máquinas.
 
 Supuestos y restricciones
-	•	El conteo de votos se reinicia por elección (PK compuesta en Voto).
-	•	“Voto en blanco” se modela con id_candidato = NULL.
-	•	Un elector sólo puede votar una vez por elección (atributo si_voto en Padrón_Elección).
-	•	Presidente/Vice/Suplente son 1:1 con mesa; Técnico es 1:N; Fiscal es N:M con mesa y partido.
-	•	Consultas populares pueden asociarse muchas por elección (M:N via elección_consulta).
-	•	El sistema almacena datos históricos sin permitir modificaciones retroactivas.
+- El conteo de votos se reinicia por elección (PK compuesta en Voto).
+- “Voto en blanco” se modela con id_candidato = NULL.
+- Un elector sólo puede votar una vez por elección (atributo si_voto en Padrón_Elección).
+- Presidente/Vice/Suplente son 1:1 con mesa; Técnico es 1:N; Fiscal es N:M con mesa y partido.
+- Consultas populares pueden asociarse muchas por elección (M:N via elección_consulta).
+- El sistema almacena datos históricos sin permitir modificaciones retroactivas.
