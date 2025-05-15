@@ -1128,10 +1128,8 @@ SELECT COUNT(*) AS votos_blanco
    AND v.num_voto    = vc.num_voto
  WHERE v.id_eleccion = 'E01'
    AND vc.id_politico IS NULL;
- 
 
-
- 
+--
 
  
  SELECT 
@@ -1161,6 +1159,9 @@ FROM (
 ) AS resultados
 JOIN POLITICO politicos ON politicos.id_candidato = resultados.id_politico
 WHERE resultados.ranking = 1;
+
+
+
 
 
 
