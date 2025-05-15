@@ -3,13 +3,25 @@ CREATE TABLE ELECTOR (
   nombre VARCHAR(50),
   apellido VARCHAR(50),
   fecha_nacimiento DATE,
-  direccion VARCHAR(100)
+  calle VARCHAR(100)
+  altura VARCHAR(50),
+  provincia VARCHAR(50),
+  codigo_postal VARCHAR(50)
+);
+
+CREATE TABLE MAQUINA_VOTOS (
+  numero_serie VARCHAR(30) PRIMARY KEY,
+  info_hardware VARCHAR(100),
+  info_software VARCHAR(100)
 );
 
 CREATE TABLE CENTRO_VOTACION (
   id_centro VARCHAR(20) PRIMARY KEY,
   nombre VARCHAR(50),
-  direccion VARCHAR(100)
+  calle VARCHAR(100)
+  altura VARCHAR(50),
+  provincia VARCHAR(50),
+  codigo_postal VARCHAR(50)
 );
 
 CREATE TABLE RESPONSABLE (
@@ -22,9 +34,14 @@ CREATE TABLE CAMIONETA (
   id_camioneta VARCHAR(20) PRIMARY KEY,
   marca VARCHAR(50),
   modelo VARCHAR(50),
-  patente VARCHAR(20),
-  dni VARCHAR(20),
-  FOREIGN KEY (dni) REFERENCES RESPONSABLE(dni)
+  patente VARCHAR(20)
+);
+
+CREATE TABLE CAMIONETA_RESPONSABLE (
+  id_camioneta VARCHAR(20) PRIMARY KEY,
+  dni_responsable VARCHAR(20) UNIQUE, -- unique porque es de 1 a 1 los dni_responsable no se repetiran 
+  FOREIGN KEY (id_camioneta) REFERENCES CAMIONETA(id_camioneta),
+  FOREIGN KEY (dni_responsable) REFERENCES RESPONSABLE(dni)
 );
 
 CREATE TABLE CENTRO_CAMIONETA (
@@ -43,43 +60,70 @@ CREATE TABLE INTEGRANTE (
 
 CREATE TABLE TECNICO (
   dni VARCHAR(20) PRIMARY KEY,
+  nivel_experiencia VARCHAR(20),
   FOREIGN KEY (dni) REFERENCES INTEGRANTE(dni)
 );
 
 CREATE TABLE ELECCION (
   id_eleccion VARCHAR(20) PRIMARY KEY,
   fecha_eleccion DATE,
-  estado VARCHAR(20)
+  territorio VARCHAR(20) -- a que nos referimos con estado? 
 );
 
 CREATE TABLE MESA_ELECTORAL (
   id_mesa VARCHAR(20),
   id_centro VARCHAR(20),
   id_eleccion VARCHAR(20),
-  tecnico_dni VARCHAR(20),
+  dni_tecnico VARCHAR(20) NOT NULL,
+  dni_vicepresidente VARCHAR(20) NOT NULL,
+  dni_presidente VARCHAR(20) NOT NULL,
+  dni_suplente VARCHAR(20) NOT NULL,
   PRIMARY KEY (id_mesa, id_centro, id_eleccion),
   FOREIGN KEY (id_centro) REFERENCES CENTRO_VOTACION(id_centro),
   FOREIGN KEY (id_eleccion) REFERENCES ELECCION(id_eleccion),
-  FOREIGN KEY (tecnico_dni) REFERENCES TECNICO(dni)
+  FOREIGN KEY (dni_tecnico) REFERENCES TECNICO(dni),
+  FOREIGN KEY (dni_vicepresidente) REFERENCES VICEPRESIDENTE(dni),
+  FOREIGN KEY (dni_presidente) REFERENCES PRESIDENTE(dni),
+  FOREIGN KEY (dni_suplente) REFERENCES SUPLENTE(dni)
 );
 
-CREATE TABLE PADRON_ELECCION (
+CREATE TABLE MESA_UTILIZA_MAQUINA (
+  id_mesa VARCHAR(20),
+  id_centro VARCHAR(20),
+  id_eleccion VARCHAR(20),
+  numero_serie VARCHAR(30),
+
+  PRIMARY KEY (id_mesa, id_centro, id_eleccion, numero_serie),
+
+  FOREIGN KEY (id_mesa, id_centro, id_eleccion)
+    REFERENCES MESA_ELECTORAL(id_mesa, id_centro, id_eleccion),
+
+  FOREIGN KEY (numero_serie)
+    REFERENCES MAQUINA_VOTOS(numero_serie)
+);
+
+
+CREATE TABLE PADRON_ELECCION ( 
   dni_elector VARCHAR(20),
   id_eleccion VARCHAR(20),
   id_mesa VARCHAR(20),
   centro_votacion VARCHAR(20),
   si_voto BOOLEAN,
-  PRIMARY KEY (dni_elector, id_eleccion),
+  PRIMARY KEY (dni_elector, id_eleccion), -- Aca se usa restricción semántica propia del dominio del problema(chat) que es que un elector puede solo puede estar asignado a una única mesa en una elección, entocned no necesitas las 4 PK's para armar la PK 
+  -- restricción de unicidad por elección, muy importnatne aclarar esto porque osea si pones como PK las 4 PK's completa permitis que un elecor este asociado a mas d euan emsa por eleccion. 
   FOREIGN KEY (dni_elector) REFERENCES ELECTOR(dni),
   FOREIGN KEY (id_eleccion) REFERENCES ELECCION(id_eleccion),
   FOREIGN KEY (id_mesa, centro_votacion, id_eleccion) REFERENCES MESA_ELECTORAL(id_mesa, id_centro, id_eleccion)
 );
+--Forzas que el votante aparezca una unica vez por eleccion 
+
 
 CREATE TABLE PRESIDENTE (
   dni VARCHAR(20) PRIMARY KEY,
   id_mesa VARCHAR(20),
   FOREIGN KEY (dni) REFERENCES INTEGRANTE(dni)
 );
+
 
 CREATE TABLE VICEPRESIDENTE (
   dni VARCHAR(20) PRIMARY KEY,
@@ -164,12 +208,13 @@ CREATE TABLE VOTO (
   id_mesa VARCHAR(20),
   numero_serie VARCHAR(30),
   id_centro VARCHAR(20),
-  fecha_hora TIMESTAMP,
+  ts TIMESTAMP,
   PRIMARY KEY (num_voto, id_eleccion),
   FOREIGN KEY (id_eleccion) REFERENCES ELECCION(id_eleccion),
   FOREIGN KEY (id_mesa, id_centro, id_eleccion) REFERENCES MESA_ELECTORAL(id_mesa, id_centro, id_eleccion),
   FOREIGN KEY (numero_serie) REFERENCES MAQUINA_VOTOS(numero_serie)
 );
+
 
 CREATE TABLE VOTO_CONSULTA_POPULAR (
   num_voto VARCHAR(20),
@@ -204,8 +249,15 @@ CREATE TABLE VOTO_ELECCION_CANDIDATO (
   num_voto VARCHAR(20),
   id_eleccion VARCHAR(20),
   id_politico VARCHAR(20),
-  cargo VARCHAR(50),
   PRIMARY KEY (num_voto, id_eleccion),
   FOREIGN KEY (num_voto, id_eleccion) REFERENCES VOTO(num_voto, id_eleccion),
   FOREIGN KEY (id_politico) REFERENCES POLITICO(id_candidato)
+);
+
+CREATE TABLE VOTO_ELECCION_CP (
+  id_opcion VARCHAR(20),
+  id_eleccion VARCHAR(20),
+  PRIMARY KEY (id_opcion, id_eleccion),
+  FOREIGN KEY (id_opcion) REFERENCES OPCION_RESPUESTA(id_opcion),
+  FOREIGN KEY (id_eleccion) REFERENCES CONSULTA_POPULAR(id_eleccion)
 );
