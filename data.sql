@@ -260,7 +260,7 @@ CREATE TABLE VOTO_ELECCION_CANDIDATO (
   id_politico VARCHAR(20),
   PRIMARY KEY (num_voto, id_eleccion),
   FOREIGN KEY (num_voto, id_eleccion) REFERENCES VOTO(num_voto, id_eleccion),
-  FOREIGN KEY (id_politico) REFERENCES POLITICO(id_candidato)
+  FOREIGN KEY (id_politico) REFERENCES POLITICO_PARTICIPA(id_candidato)
 );
 
 CREATE TABLE VOTO_ELECCION_CP (
@@ -341,7 +341,7 @@ INSERT INTO ELECTOR values
 ('1034', 'Valentina','De Diego',       '1997-08-10', 'Calle Santa Fe','654',  'Buenos Aires',     '3000'),
 ('1035', 'Olivier', 'Saint Nom',       '1995-09-22', 'Calle Belgrano','777',  'Buenos Aires', '1002'),
 ('1036', 'Tomas',   'Cobian Morales',  '1999-01-30', 'Calle Lavalle', '888',  'Buenos Aires', '1003');
-
+;
 
 
 
@@ -910,9 +910,9 @@ INSERT INTO PADRON_ELECCION VALUES
 ('1029', 'E02', 'M20', 'C20', TRUE),
 ('1030', 'E03', 'M1', 'C11', TRUE),
 ('1031', 'E03', 'M2', 'C12', TRUE),
-('1032', 'E03', 'M2', 'C12', TRUE),
+('1032', 'E03', 'M2', 'C12', FALSE),
 ('1033', 'E03', 'M1', 'C13', TRUE),
-('1034', 'E03', 'M1', 'C11', TRUE),
+('1034', 'E03', 'M1', 'C11', FALSE),
 ('1035', 'E03', 'M1', 'C11', TRUE),
 ('1036', 'E03', 'M1', 'C13', TRUE)
 
@@ -990,12 +990,18 @@ INSERT INTO VOTO VALUES
 ('V006', 'E01', 'M6',  'MX006-F6', 'C6',  '2023-10-22 08:25:00'),
 ('V007', 'E01', 'M7',  'MX007-G7', 'C7',  '2023-10-22 08:30:00'),
 ('V008', 'E01', 'M8',  'MX008-H8', 'C8',  '2023-10-22 08:35:00'),
+('V009', 'E01', 'M9',  'MX009-I9', 'C9',  '2023-10-22 08:40:00'),
+('V010', 'E01', 'M10', 'MX010-J0', 'C10', '2023-10-22 08:45:00'),
 ('V001', 'E02', 'M11', 'MX001-A1',  'C11', '2025-05-18 09:00:00'),
 ('V002', 'E02', 'M12', 'MX002-B2',  'C12', '2025-05-18 09:02:00'),
 ('V003', 'E02', 'M13', 'MX003-C3',  'C13', '2025-05-18 09:04:00'),
 ('V004', 'E02', 'M14', 'MX004-D4',  'C14', '2025-05-18 09:06:00'),
 ('V005', 'E02', 'M15', 'MX005-E5',  'C15', '2025-05-18 09:08:00'),
 ('V006', 'E02', 'M16', 'MX006-F6',  'C16', '2025-05-18 09:10:00'),
+('V007', 'E02', 'M17', 'MX007-G7',  'C17', '2025-05-18 09:12:00'),
+('V008', 'E02', 'M18', 'MX008-H8',  'C18', '2025-05-18 09:14:00'),
+('V009', 'E02', 'M19', 'MX011-K1',  'C19', '2025-05-18 09:16:00'),
+('V010', 'E02', 'M20', 'MX012-L2',  'C20', '2025-05-18 09:18:00'),
 ('V001', 'E03', 'M1',  'MX001-A1', 'C11',  '2025-05-16 08:00:00'),
 ('V002', 'E03', 'M2',  'MX002-B2', 'C12',  '2025-05-16 08:05:00'),
 ('V003', 'E03', 'M2',  'MX003-C3', 'C12',  '2025-05-16 08:10:00'),
@@ -1045,12 +1051,19 @@ INSERT INTO VOTO_ELECCION_LEGISLATIVA VALUES
 ('V006', 'E01'),
 ('V007', 'E01'),
 ('V008', 'E01'),
+('V009', 'E01'),
+('V010', 'E01'), 
 ('V001', 'E02'),
 ('V002', 'E02'),
 ('V003', 'E02'),
 ('V004', 'E02'),
 ('V005', 'E02'),
-('V006', 'E02');
+('V006', 'E02'),
+('V007', 'E02'),
+('V008', 'E02'),
+('V009', 'E02'),
+('V010', 'E02')
+;
 
 --Opcion respuesta 
 
@@ -1069,26 +1082,28 @@ INSERT INTO VOTO_ELECCION_CANDIDATO VALUES
 ('V006', 'E01', '9001'),
 ('V007', 'E01', '9005'),
 ('V008', 'E01', '9002'),
+('V009', 'E01', '9005'),
+('V010', 'E01', '9005'),
 ('V001', 'E02', '9006'),
 ('V002', 'E02', '9007'),
 ('V003', 'E02', '9008'),
 ('V004', 'E02', '9009'),
 ('V005', 'E02', '9010'),
-('V006', 'E02', '9006')
-;
+('V006', 'E02', '9006'),
+('V007', 'E02', '9007'),
+('V008', 'E02', '9008'),
+('V009', 'E02', '9009'),
+('V010', 'E02', '9010');
 
-
-/*
- Query para eliminar voto 9 y 10 de E01
 DELETE FROM VOTO_ELECCION_CANDIDATO
  WHERE id_eleccion = 'E01'
    AND num_voto    IN ('V009', 'V010');
-*/
+
 
 -- Cantidad de votantes que se presentaron en eleccion X. 
 SELECT COUNT(*) AS total_votos
 FROM PADRON_ELECCION
-where id_eleccion = 'E01' and si_voto is true;
+where id_eleccion = 'E03' and si_voto is true;
 
 -- Votantes que votaron que no fueron en la eleccion X
 SELECT pe.dni_elector,
@@ -1097,7 +1112,7 @@ SELECT pe.dni_elector,
   FROM PADRON_ELECCION pe
   JOIN ELECTOR e
     ON pe.dni_elector = e.dni
- WHERE pe.id_eleccion = 'E02' and pe.si_voto = false
+ WHERE pe.id_eleccion = 'E03' and pe.si_voto = false
  
  
 --Cantidad de votantes que votaron en blanco 
@@ -1108,10 +1123,10 @@ SELECT COUNT(*) AS votos_blanco
    AND v.num_voto    = vc.num_voto
  WHERE v.id_eleccion = 'E01'
    AND vc.id_politico IS NULL;
+
+--
+
  
-
-
---Asignacion de camionetas en la eleccion x 
  SELECT 
   cce.id_camioneta,
   r.dni_responsable,
@@ -1119,58 +1134,27 @@ SELECT COUNT(*) AS votos_blanco
   cce.id_eleccion
 FROM CAMIONETA_CENTRO_ELECCION cce
 JOIN CAMIONETA_RESPONSABLE r ON r.id_camioneta = cce.id_camioneta
-where cce.id_eleccion = 'E03'
+where cce.id_eleccion = 'E01'
 ;
 
 
 
 
-
--- ESTA QUERY TE DICE QUE PARTIDO SACO MAS VOTOS EN CADA PROVINCIA
-SELECT resultado.provincia, resultado.id_partido, partido.nombre, resultado.votos
+-- Consulta chequear cantiad de voto por provincia (chequearla) 
+SELECT resultados.provincia, resultados.id_politico, politicos.nombre AS nombre_politico, resultados.votos
 FROM (
-    SELECT c.provincia, pep.id_partido, COUNT(*) AS votos,
-           RANK() OVER (PARTITION BY c.provincia ORDER BY COUNT(*) DESC) AS rnk
+    SELECT e.provincia, vec.id_politico, COUNT(*) AS votos,
+           RANK() OVER (PARTITION BY e.provincia ORDER BY COUNT(*) DESC) AS ranking
     FROM VOTO_ELECCION_CANDIDATO vec
     JOIN VOTO v ON v.num_voto = vec.num_voto AND v.id_eleccion = vec.id_eleccion
-    JOIN CENTRO_VOTACION c ON c.id_centro = v.id_centro
-    JOIN POLITICO_ELECCION_PERTENECE_PARTIDO pep ON vec.id_politico = pep.id_politico AND vec.id_eleccion = pep.id_eleccion
-    WHERE vec.id_eleccion = 'E01'
-    GROUP BY c.provincia, pep.id_partido
-) resultado
-JOIN PARTIDO_POLITICO partido ON partido.id_partido = resultado.id_partido
-WHERE resultado.rnk = 1;
+    JOIN PADRON_ELECCION pe ON pe.id_mesa = v.id_mesa AND pe.id_eleccion = v.id_eleccion
+    JOIN ELECTOR e ON e.dni = pe.dni_elector
+    WHERE v.id_eleccion = 'E01'  -- ← ajustá esta ID a tu elección legislativa
+    GROUP BY e.provincia, vec.id_politico
+) AS resultados
+JOIN POLITICO politicos ON politicos.id_candidato = resultados.id_politico
+WHERE resultados.ranking = 1;
 
-
--- Total de votos por partido político en una elección específica
-
-SELECT p.id_partido, p.nombre AS nombre_partido, COUNT(*) AS total_votos
-FROM VOTO_ELECCION_CANDIDATO vec
-JOIN POLITICO_ELECCION_PERTENECE_PARTIDO pep ON vec.id_politico = pep.id_politico AND vec.id_eleccion = pep.id_eleccion
-JOIN PARTIDO_POLITICO p ON p.id_partido = pep.id_partido
-WHERE vec.id_eleccion = 'E01'
-GROUP BY p.id_partido, p.nombre
-ORDER BY total_votos DESC;
-
-
- --Consult arelevante que me surge de eesta consulta, osea noosotros no pdoemos restringir que la cantidad de votos registrados
--- sea equivalente e al cantidad de votantes que tienen si_voto = TRUE. No se puede poner una constran cross tables para forzar esto 
--- o uno hace chequeo peridicos de los datos que se cargan, o uno asume tambien que los datos que se vayan cargando sean veridicos. 
-
-
--- Cantidad de votos por opción de respuesta en una consulta
-
-SELECT 
-  cp.pregunta,
-  vr.id_opcion,
-  o.respuesta,
-  COUNT(*) AS total_votos
-FROM VOTO_CONSULTA_OPCION vr
-JOIN OPCION_RESPUESTA o ON o.id_opcion = vr.id_opcion
-JOIN CONSULTA_POPULAR cp ON cp.id_eleccion = vr.id_eleccion
-WHERE vr.id_eleccion = 'E03'  -- 🔍 reemplazá con tu consulta real
-GROUP BY cp.pregunta, vr.id_opcion, o.respuesta
-ORDER BY total_votos DESC;
 
 
 
