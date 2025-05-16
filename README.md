@@ -11,11 +11,12 @@ Este proyecto implementa la base de datos de un sistema de voto electrónico par
 ## Estructura del repositorio  
 - README.md
 - docs/
--     DER.png (Diagrama Entidad–Relación)
+-     DER.png       (Diagrama Entidad–Relación)
 -     ModeloRelacional.md  (Modelo relacional derivado)
 - sql/
--     tabla.sql  (creación de tablas y estructura)
--     data.sql (Datos de ejemplo para rellenar la base de datos)
+-     tabla.sql     (creación de tablas y estructura)
+-     data.sql      (Datos de ejemplo para rellenar la base de datos)
+-     queries.sql   (consultas a la base de datos)
 
 ## Contenidos principales
 - Elector, Padrón_Elección: gestión del registro electoral y control de voto.
