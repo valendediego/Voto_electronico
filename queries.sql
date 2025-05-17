@@ -184,7 +184,7 @@ ORDER BY
     id_eleccion;
 
 /*==============================================================================
- * SECCIÓN 4: LOGÍSTICA ELECTORAL (CMAIONETAS Y REPSONSABELS)
+ * SECCIÓN 4: LOGÍSTICA ELECTORAL (CAMIONETAS Y REPSONSABELS)
  *==============================================================================*/
 
 -- Consulta 7: Asignación de camionetas para la elección E02
