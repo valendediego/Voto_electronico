@@ -132,14 +132,14 @@ CREATE TABLE PADRON_ELECCION (
   dni_elector VARCHAR(20),
   id_eleccion VARCHAR(20),
   id_mesa VARCHAR(20),
-  centro_votacion VARCHAR(20),
+  id_centro VARCHAR(20),
   si_voto BOOLEAN,
 
   PRIMARY KEY (dni_elector, id_eleccion), -- Aca se usa restricción semántica propia del dominio del problema(chat) que es que un elector puede solo puede estar asignado a una única mesa en una elección, entocned no necesitas las 4 PK's para armar la PK 
   -- restricción de unicidad por elección, muy importnatne aclarar esto porque osea si pones como PK las 4 PK's completa permitis que un elecor este asociado a mas d euan emsa por eleccion. 
   FOREIGN KEY (dni_elector) REFERENCES ELECTOR(dni),
   FOREIGN KEY (id_eleccion) REFERENCES ELECCION(id_eleccion),
-  FOREIGN KEY (id_mesa, centro_votacion, id_eleccion) REFERENCES MESA_ELECTORAL(id_mesa, id_centro, id_eleccion)
+  FOREIGN KEY (id_mesa, id_centro, id_eleccion) REFERENCES MESA_ELECTORAL(id_mesa, id_centro, id_eleccion)
 );
 --Forzas que el votante aparezca una unica vez por eleccion 
 
@@ -219,17 +219,7 @@ CREATE TABLE VOTO (
   id_centro VARCHAR(20),
   ts TIMESTAMP,
   PRIMARY KEY (num_voto, id_eleccion),
-  FOREIGN KEY (id_eleccion) REFERENCES ELECCION(id_eleccion),
-  FOREIGN KEY (id_mesa, id_centro, id_eleccion) REFERENCES MESA_ELECTORAL(id_mesa, id_centro, id_eleccion),
-  FOREIGN KEY (numero_serie) REFERENCES MAQUINA_VOTOS(numero_serie)
-);
-
-
-CREATE TABLE VOTO_CONSULTA_POPULAR (
-  num_voto VARCHAR(20),
-  id_eleccion VARCHAR(20),
-  PRIMARY KEY (num_voto, id_eleccion),
-  FOREIGN KEY (num_voto, id_eleccion) REFERENCES VOTO(num_voto, id_eleccion)
+  FOREIGN KEY (id_mesa, id_centro, id_eleccion,numero_serie) REFERENCES MESA_UTILIZA_MAQUINA(id_mesa, id_centro, id_eleccion,numero_serie)
 );
 
 CREATE TABLE VOTO_ELECCION_LEGISLATIVA (
@@ -239,45 +229,54 @@ CREATE TABLE VOTO_ELECCION_LEGISLATIVA (
   FOREIGN KEY (num_voto, id_eleccion) REFERENCES VOTO(num_voto, id_eleccion)
 );
 
+CREATE TABLE VOTO_CONSULTA_POPULAR (
+  num_voto VARCHAR(20),
+  id_eleccion VARCHAR(20),
+  PRIMARY KEY (num_voto, id_eleccion),
+  FOREIGN KEY (num_voto, id_eleccion) REFERENCES VOTO(num_voto, id_eleccion)
+);
 
 CREATE TABLE OPCION_RESPUESTA (
   id_opcion VARCHAR(20) PRIMARY KEY,
   respuesta VARCHAR(100)
 );
 
-CREATE TABLE VOTO_CONSULTA_OPCION (
+CREATE TABLE VOTO_ELIJE_OPCION_RESPUESTA (
   num_voto VARCHAR(20),
   id_eleccion VARCHAR(20),
   id_opcion VARCHAR(20),
   PRIMARY KEY (num_voto, id_eleccion),
-  FOREIGN KEY (num_voto, id_eleccion) REFERENCES VOTO(num_voto, id_eleccion),
+  FOREIGN KEY (num_voto, id_eleccion) REFERENCES VOTO_CONSULTA_POPULAR(num_voto, id_eleccion),
   FOREIGN KEY (id_opcion) REFERENCES OPCION_RESPUESTA(id_opcion)
 );
+
+CREATE TABLE CP_TIENE_OPCION_RESPUESTA (
+  id_eleccion VARCHAR(20),
+  id_opcion VARCHAR(20),
+  PRIMARY KEY (id_eleccion, id_opcion),
+  FOREIGN KEY (id_opcion) REFERENCES OPCION_RESPUESTA(id_opcion),
+  FOREIGN KEY (id_eleccion) REFERENCES CONSULTA_POPULAR(id_eleccion)
+);
+
 
 CREATE TABLE VOTO_ELECCION_CANDIDATO (
   num_voto VARCHAR(20),
   id_eleccion VARCHAR(20),
   id_politico VARCHAR(20),
   PRIMARY KEY (num_voto, id_eleccion),
-  FOREIGN KEY (num_voto, id_eleccion) REFERENCES VOTO(num_voto, id_eleccion),
+  FOREIGN KEY (num_voto, id_eleccion) REFERENCES VOTO_ELECCION_LEGISLATIVA(num_voto, id_eleccion),
   FOREIGN KEY (id_politico) REFERENCES POLITICO(id_candidato)
 );
 
-CREATE TABLE VOTO_ELECCION_CP (
-  id_opcion VARCHAR(20),
-  id_eleccion VARCHAR(20),
-  PRIMARY KEY (id_opcion, id_eleccion),
-  FOREIGN KEY (id_opcion) REFERENCES OPCION_RESPUESTA(id_opcion),
-  FOREIGN KEY (id_eleccion) REFERENCES CONSULTA_POPULAR(id_eleccion)
-);
+
 
 -- Caso que queramos borrar todas las tablas para reiniciar
 
 /*
 DROP TABLE IF EXISTS 
-  VOTO_ELECCION_CP,
+  CP_TIENE_OPCION_RESPUESTA,
   VOTO_ELECCION_CANDIDATO,
-  VOTO_CONSULTA_OPCION,
+  VOTO_ELIJE_OPCION_RESPUESTA,
   VOTO_ELECCION_LEGISLATIVA,
   VOTO_CONSULTA_POPULAR,
   VOTO,
