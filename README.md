@@ -13,6 +13,7 @@ Este proyecto implementa la base de datos de un sistema de voto electrónico par
 - docs/
 -     DER.png       (Diagrama Entidad–Relación)
 -     ModeloRelacional.md  (Modelo relacional derivado)
+-     AnalisisDominio (analisis del dominio)
 - sql/
 -     tabla.sql     (creación de tablas y estructura)
 -     data.sql      (Datos de ejemplo para rellenar la base de datos)
