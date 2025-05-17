@@ -425,26 +425,26 @@ INSERT INTO SUPLENTE VALUES
  * LOGISTICA (CAMIONETA Y RESPONSABLE)
  *------------------------------------------------------------------------------*/
 INSERT INTO CAMIONETA VALUES
-('CAM1',  'Ford',      'Ranger',    'ABC101'),
-('CAM2',  'Toyota',    'Hilux',     'DEF202'),
-('CAM3',  'Chevrolet', 'S10',       'GHI303'),
-('CAM4',  'Volkswagen','Amarok',    'JKL404'),
-('CAM5',  'Nissan',    'Frontier',  'MNO505'),
-('CAM6',  'Renault',   'Alaskan',   'PQR606'),
-('CAM7',  'Fiat',      'Toro',      'STU707'),
-('CAM8',  'Peugeot',   'Landtrek',  'VWX808'),
-('CAM9',  'Jeep',      'Gladiator', 'YZA909'),
-('CAM10', 'RAM',       '1500',      'BCD010'),
-('CAM11', 'Mercedes-Benz', 'X-Class',     'EXA111'),
-('CAM12', 'Hyundai',       'Santa Cruz',  'EXA112'),
-('CAM13', 'Mitsubishi',    'L200',        'EXA113'),
-('CAM14', 'Honda',         'Ridgeline',   'EXA114'),
-('CAM15', 'Chevrolet',     'Colorado',    'EXA115'),
-('CAM16', 'GMC',           'Canyon',      'EXA116'),
-('CAM17', 'Isuzu',         'D-Max',       'EXA117'),
-('CAM18', 'Tata',          'Xenon',       'EXA118'),
-('CAM19', 'Great Wall',    'Wingle 7',    'EXA119'),
-('CAM20', 'Mahindra',      'Scorpio PikUp','EXA120');
+('CAM1',  'Ford',      'Ranger'),
+('CAM2',  'Toyota',    'Hilux'),
+('CAM3',  'Chevrolet', 'S10'),
+('CAM4',  'Volkswagen','Amarok'),
+('CAM5',  'Nissan',    'Frontier'),
+('CAM6',  'Renault',   'Alaskan'),
+('CAM7',  'Fiat',      'Toro'),
+('CAM8',  'Peugeot',   'Landtrek'),
+('CAM9',  'Jeep',      'Gladiator'),
+('CAM10', 'RAM',       '1500'),
+('CAM11', 'Mercedes-Benz', 'X-Class'),
+('CAM12', 'Hyundai',       'Santa Cruz'),
+('CAM13', 'Mitsubishi',    'L200'),
+('CAM14', 'Honda',         'Ridgeline'),
+('CAM15', 'Chevrolet',     'Colorado'),
+('CAM16', 'GMC',           'Canyon'),
+('CAM17', 'Isuzu',         'D-Max'),
+('CAM18', 'Tata',          'Xenon'),
+('CAM19', 'Great Wall',    'Wingle 7'),
+('CAM20', 'Mahindra',      'Scorpio PikUp');
 
 
 INSERT INTO RESPONSABLE VALUES
@@ -753,7 +753,7 @@ INSERT INTO POLITICO VALUES
 
 
 --Politico Pariticipa Eleccion
-INSERT INTO POLITICO_PARTICIPA VALUES
+INSERT INTO CANDIDATO VALUES
 ('9001', 'E01'),  -- Ricardo Alfonsín - Unión Cívica Radical
 ('9002', 'E01'),  -- Sergio Massa - Partido Justicialista
 ('9003', 'E01'),  -- Patricia Bullrich - PRO

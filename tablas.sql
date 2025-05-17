@@ -89,14 +89,14 @@ CREATE TABLE CONSULTA_POPULAR (
  *------------------------------------------------------------------------------*/
 
 CREATE TABLE MESA_ELECTORAL (
-    id_mesa             VARCHAR(20),
+    nro_mesa             VARCHAR(20),
     id_centro           VARCHAR(20),
     id_eleccion         VARCHAR(20),
     dni_tecnico         VARCHAR(20) NOT NULL,
     dni_vicepresidente  VARCHAR(20) NOT NULL,
     dni_presidente      VARCHAR(20) NOT NULL,
     dni_suplente        VARCHAR(20) NOT NULL,
-    PRIMARY KEY (id_mesa, id_centro, id_eleccion),
+    PRIMARY KEY (nro_mesa, id_centro, id_eleccion),
     FOREIGN KEY (id_centro)          REFERENCES CENTRO_VOTACION(id_centro),
     FOREIGN KEY (id_eleccion)        REFERENCES ELECCION(id_eleccion),
     FOREIGN KEY (dni_tecnico)        REFERENCES TECNICO(dni),
@@ -106,13 +106,13 @@ CREATE TABLE MESA_ELECTORAL (
 );
 
 CREATE TABLE MESA_UTILIZA_MAQUINA (
-    id_mesa             VARCHAR(20),
+    nro_mesa             VARCHAR(20),
     id_centro           VARCHAR(20),
     id_eleccion         VARCHAR(20),
     numero_serie        VARCHAR(30),
-    PRIMARY KEY (id_mesa, id_centro, id_eleccion, numero_serie),
-    FOREIGN KEY (id_mesa, id_centro, id_eleccion)
-        REFERENCES MESA_ELECTORAL(id_mesa, id_centro, id_eleccion),
+    PRIMARY KEY (nro_mesa, id_centro, id_eleccion, numero_serie),
+    FOREIGN KEY (nro_mesa, id_centro, id_eleccion)
+        REFERENCES MESA_ELECTORAL(nro_mesa, id_centro, id_eleccion),
     FOREIGN KEY (numero_serie)
         REFERENCES MAQUINA_VOTOS(numero_serie)
 );
@@ -124,14 +124,14 @@ CREATE TABLE MESA_UTILIZA_MAQUINA (
 CREATE TABLE PADRON_ELECCION ( 
     dni_elector         VARCHAR(20),
     id_eleccion         VARCHAR(20),
-    id_mesa             VARCHAR(20),
+    nro_mesa             VARCHAR(20),
     id_centro           VARCHAR(20),
     si_voto             BOOLEAN,
     PRIMARY KEY (dni_elector, id_eleccion), 
     FOREIGN KEY (dni_elector) REFERENCES ELECTOR(dni),
     FOREIGN KEY (id_eleccion) REFERENCES ELECCION(id_eleccion),
-    FOREIGN KEY (id_mesa, id_centro, id_eleccion) 
-        REFERENCES MESA_ELECTORAL(id_mesa, id_centro, id_eleccion)
+    FOREIGN KEY (nro_mesa, id_centro, id_eleccion) 
+        REFERENCES MESA_ELECTORAL(nro_mesa, id_centro, id_eleccion)
 );
 
 /*------------------------------------------------------------------------------
@@ -145,27 +145,26 @@ CREATE TABLE RESPONSABLE (
 );
 
 CREATE TABLE CAMIONETA (
-    id_camioneta        VARCHAR(20) PRIMARY KEY,
+    patente        VARCHAR(20) PRIMARY KEY,
     marca               VARCHAR(50),
-    modelo              VARCHAR(50),
-    patente             VARCHAR(20)
+    modelo              VARCHAR(50)
 );
 
 /* Relación camioneta-responsable */
 CREATE TABLE CAMIONETA_RESPONSABLE (
-    id_camioneta        VARCHAR(20),
+    patente        VARCHAR(20),
     dni_responsable     VARCHAR(20),
-    PRIMARY KEY (id_camioneta, dni_responsable),
-    FOREIGN KEY (id_camioneta)    REFERENCES CAMIONETA(id_camioneta),
+    PRIMARY KEY (patente, dni_responsable),
+    FOREIGN KEY (patente)    REFERENCES CAMIONETA(patente),
     FOREIGN KEY (dni_responsable) REFERENCES RESPONSABLE(dni)
 );
 
 CREATE TABLE CAMIONETA_CENTRO_ELECCION (
-    id_camioneta        VARCHAR(20),
+    patente        VARCHAR(20),
     id_eleccion         VARCHAR(20),
     id_centro           VARCHAR(20),
-    PRIMARY KEY (id_camioneta, id_eleccion),
-    FOREIGN KEY (id_camioneta) REFERENCES CAMIONETA(id_camioneta),
+    PRIMARY KEY (patente, id_eleccion),
+    FOREIGN KEY (patente) REFERENCES CAMIONETA(patente),
     FOREIGN KEY (id_eleccion)  REFERENCES ELECCION(id_eleccion),
     FOREIGN KEY (id_centro)    REFERENCES CENTRO_VOTACION(id_centro)
 );
@@ -181,13 +180,13 @@ CREATE TABLE FISCAL (
 
 CREATE TABLE MESA_FISCAL (
     dni_fiscal          VARCHAR(20),
-    id_mesa             VARCHAR(20),
+    nro_mesa             VARCHAR(20),
     id_centro           VARCHAR(20),
     id_eleccion         VARCHAR(20),
-    PRIMARY KEY (dni_fiscal, id_mesa, id_centro, id_eleccion),
+    PRIMARY KEY (dni_fiscal, nro_mesa, id_centro, id_eleccion),
     FOREIGN KEY (dni_fiscal) REFERENCES FISCAL(dni),
-    FOREIGN KEY (id_mesa, id_centro, id_eleccion) 
-        REFERENCES MESA_ELECTORAL(id_mesa, id_centro, id_eleccion)
+    FOREIGN KEY (nro_mesa, id_centro, id_eleccion) 
+        REFERENCES MESA_ELECTORAL(nro_mesa, id_centro, id_eleccion)
 );
 
 CREATE TABLE PARTIDO_POLITICO (
@@ -208,26 +207,26 @@ CREATE TABLE FISCAL_PARTIDO (
  *------------------------------------------------------------------------------*/
 
 CREATE TABLE POLITICO (
-    id_candidato        VARCHAR(20) PRIMARY KEY,
+    dni_politico        VARCHAR(20) PRIMARY KEY,
     nombre              VARCHAR(50),
     apellido            VARCHAR(50)
 );
 
-CREATE TABLE POLITICO_PARTICIPA (
-    id_politico         VARCHAR(20),
+CREATE TABLE CANDIDATO (
+    dni_politico         VARCHAR(20),
     id_eleccion         VARCHAR(20),
-    PRIMARY KEY (id_politico, id_eleccion),
-    FOREIGN KEY (id_politico)  REFERENCES POLITICO(id_candidato),
+    PRIMARY KEY (dni_politico, id_eleccion),
+    FOREIGN KEY (dni_politico)  REFERENCES POLITICO(dni_politico),
     FOREIGN KEY (id_eleccion)  REFERENCES ELECCION_LEGISLATIVA(id_eleccion)
 );
 
 CREATE TABLE POLITICO_ELECCION_PERTENECE_PARTIDO (
-    id_politico         VARCHAR(20),
+    dni_politico         VARCHAR(20),
     id_eleccion         VARCHAR(20),
     id_partido          VARCHAR(20),
-    PRIMARY KEY (id_politico, id_eleccion),
-    FOREIGN KEY (id_politico, id_eleccion) 
-        REFERENCES POLITICO_PARTICIPA(id_politico, id_eleccion),
+    PRIMARY KEY (dni_politico, id_eleccion),
+    FOREIGN KEY (dni_politico, id_eleccion) 
+        REFERENCES POLITICO_PARTICIPA(dni_politico, id_eleccion),
     FOREIGN KEY (id_partido) REFERENCES PARTIDO_POLITICO(id_partido)
 );
 
@@ -238,13 +237,13 @@ CREATE TABLE POLITICO_ELECCION_PERTENECE_PARTIDO (
 CREATE TABLE VOTO (
     num_voto            VARCHAR(20),
     id_eleccion         VARCHAR(20),
-    id_mesa             VARCHAR(20),
+    nro_mesa             VARCHAR(20),
     numero_serie        VARCHAR(30),
     id_centro           VARCHAR(20),
     ts                  TIMESTAMP,
     PRIMARY KEY (num_voto, id_eleccion),
-    FOREIGN KEY (id_mesa, id_centro, id_eleccion, numero_serie) 
-        REFERENCES MESA_UTILIZA_MAQUINA(id_mesa, id_centro, id_eleccion, numero_serie)
+    FOREIGN KEY (nro_mesa, id_centro, id_eleccion, numero_serie) 
+        REFERENCES MESA_UTILIZA_MAQUINA(nro_mesa, id_centro, id_eleccion, numero_serie)
 );
 
 CREATE TABLE VOTO_ELECCION_LEGISLATIVA (
@@ -287,9 +286,9 @@ CREATE TABLE CP_TIENE_OPCION_RESPUESTA (
 CREATE TABLE VOTO_ELIJE_CANDIDATO (
     num_voto            VARCHAR(20),
     id_eleccion         VARCHAR(20),
-    id_politico         VARCHAR(20),
+    dni_politico         VARCHAR(20),
     PRIMARY KEY (num_voto, id_eleccion),
     FOREIGN KEY (num_voto, id_eleccion) 
         REFERENCES VOTO_ELECCION_LEGISLATIVA(num_voto, id_eleccion),
-    FOREIGN KEY (id_politico) REFERENCES POLITICO(id_candidato)
+    FOREIGN KEY (dni_politico) REFERENCES POLITICO(dni_politico)
 );

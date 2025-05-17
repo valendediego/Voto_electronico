@@ -19,7 +19,7 @@ FROM
     VOTO_ELIJE_CANDIDATO vec
 JOIN 
     POLITICO_ELECCION_PERTENECE_PARTIDO pep 
-    ON vec.id_politico = pep.id_politico AND vec.id_eleccion = pep.id_eleccion
+    ON vec.dni_politico = pep.dni_politico AND vec.id_eleccion = pep.id_eleccion
 JOIN 
     PARTIDO_POLITICO p 
     ON p.id_partido = pep.id_partido
@@ -40,7 +40,7 @@ WITH total_votos AS (
     WHERE id_eleccion = 'E01'
 )
 SELECT
-    vc.id_politico     AS id_candidato,
+    vc.dni_politico     AS id_candidato,
     p.nombre           AS nombre,
     p.apellido         AS apellido,
     COUNT(*)           AS votos_obtenidos,
@@ -49,13 +49,13 @@ FROM
     VOTO_ELIJE_CANDIDATO vc
 JOIN 
     POLITICO p
-    ON vc.id_politico = p.id_candidato
+    ON vc.dni_politico = p.id_candidato
 CROSS JOIN 
     total_votos tv
 WHERE 
     vc.id_eleccion = 'E01'
 GROUP BY
-    vc.id_politico,
+    vc.dni_politico,
     p.nombre,
     p.apellido,
     tv.total
@@ -120,7 +120,7 @@ SELECT COUNT(*) AS cant_votos_blanco
     ON v.id_eleccion = vc.id_eleccion
    AND v.num_voto    = vc.num_voto
  WHERE v.id_eleccion = 'E02'
-   AND vc.id_politico IS NULL;
+   AND vc.dni_politico IS NULL;
 
 /*------------------------------------------------------------------------------*/
 
@@ -151,7 +151,7 @@ WITH todos_los_votos AS (
             WHEN cp.id_eleccion IS NOT NULL THEN cp.pregunta
         END as detalle,
         CASE 
-            WHEN el.id_eleccion IS NOT NULL AND vec.id_politico IS NULL THEN 1
+            WHEN el.id_eleccion IS NOT NULL AND vec.dni_politico IS NULL THEN 1
             WHEN cp.id_eleccion IS NOT NULL AND veor.id_opcion IS NULL THEN 1
             ELSE 0
         END as es_voto_blanco
@@ -190,14 +190,14 @@ ORDER BY
 -- Consulta 7: Asignación de camionetas para la elección E02
 -- Muestra qué camionetas están asignadas a cada centro de votación, con su responsable
 SELECT 
-    cce.id_camioneta,
+    cce.patente,
     r.dni_responsable,
     cce.id_centro,
     cce.id_eleccion
 FROM 
     CAMIONETA_CENTRO_ELECCION cce
 JOIN 
-    CAMIONETA_RESPONSABLE r ON r.id_camioneta = cce.id_camioneta
+    CAMIONETA_RESPONSABLE r ON r.patente = cce.patente
 WHERE 
     cce.id_eleccion = 'E02';
 
@@ -205,16 +205,16 @@ WHERE
 -- Muestra qué camionetas están asignadas a cada centro de votación, con su responsable
 
 SELECT 
-    cce.id_camioneta,
+    cce.patente,
     r.dni_responsable,
     cce.id_centro,
     cce.id_eleccion
 FROM
     CAMIONETA_CENTRO_ELECCION cce
 JOIN
-    CAMIONETA_RESPONSABLE r ON r.id_camioneta = cce.id_camioneta
+    CAMIONETA_RESPONSABLE r ON r.patente = cce.patente
 ORDER BY
-    cce.id_camioneta;
+    cce.patente;
 
 
 /*==============================================================================
@@ -242,7 +242,7 @@ FROM (
         CENTRO_VOTACION c ON c.id_centro = v.id_centro
     JOIN 
         POLITICO_ELECCION_PERTENECE_PARTIDO pep 
-        ON vec.id_politico = pep.id_politico AND vec.id_eleccion = pep.id_eleccion
+        ON vec.dni_politico = pep.dni_politico AND vec.id_eleccion = pep.id_eleccion
     WHERE 
         vec.id_eleccion = 'E01'
     GROUP BY 
@@ -287,7 +287,7 @@ LEFT JOIN
       ON vec.num_voto    = v.num_voto 
      AND vec.id_eleccion = v.id_eleccion
     JOIN POLITICO_ELECCION_PERTENECE_PARTIDO pep 
-      ON pep.id_politico = vec.id_politico 
+      ON pep.dni_politico = vec.dni_politico 
      AND pep.id_eleccion = vec.id_eleccion
     WHERE v.id_eleccion = 'E01'
     GROUP BY c.provincia, pep.id_partido
@@ -327,7 +327,7 @@ WITH votos_por_partido_eleccion AS (
         ON v.id_centro = c.id_centro
     JOIN 
         POLITICO_ELECCION_PERTENECE_PARTIDO pep 
-        ON vec.id_politico = pep.id_politico 
+        ON vec.dni_politico = pep.dni_politico 
         AND vec.id_eleccion = pep.id_eleccion
     JOIN 
         PARTIDO_POLITICO p 
@@ -379,7 +379,7 @@ ORDER BY
 -- Muestra los integrantes de cada mesa electoral: presidente, vicepresidente, suplente, tecnico.
 
 SELECT 
-    me.id_mesa,
+    me.nro_mesa,
     me.dni_presidente,
     me.dni_vicepresidente,
     me.dni_suplente,
@@ -391,18 +391,18 @@ WHERE me.id_eleccion = 'E01';
 
 -- Consulta 14: Fiscales asignados en cada mesa en una eleccion
 SELECT 
-    me.id_mesa,
+    me.nro_mesa,
     me.id_eleccion,
     mf.dni_fiscal
 FROM
     MESA_FISCAL mf 
 JOIN
     MESA_ELECTORAL me 
-    ON me.id_mesa = mf.id_mesa
+    ON me.nro_mesa = mf.nro_mesa
     AND me.id_centro = mf.id_centro
     AND me.id_eleccion = mf.id_eleccion
 ORDER BY
-    me.id_mesa,
+    me.nro_mesa,
     me.id_eleccion;
 
 /*------------------------------------------------------------------------------*/
@@ -445,12 +445,12 @@ HAVING
 -- Verifica que ningún candidato esté asignado a más de un partido en una misma elección
 -- Si esta consulta devuelve registros, hay candidatos asignados a múltiples partidos
 SELECT 
-    id_politico, 
+    dni_politico, 
     id_eleccion, 
     COUNT(*) AS partidos_asignados
 FROM 
     POLITICO_ELECCION_PERTENECE_PARTIDO
 GROUP BY 
-    id_politico, id_eleccion
+    dni_politico, id_eleccion
 HAVING 
     COUNT(*) > 1;
