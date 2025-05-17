@@ -6,6 +6,73 @@
  *==============================================================================*/
 
 /*==============================================================================
+ * SECCIÓN GANADOR: QUIEN GANO LA ELECCION
+ *==============================================================================*/
+-- Consulta 0: Ganador de cada eleccion
+-- Muestra el partido político que ganó en cada elección, junto con el nombre del politico o de la opcion repsuesta con el total de votos obtenidos
+
+WITH tipo_eleccion AS (
+    SELECT 
+        e.id_eleccion,
+        el.cargo as detalle
+    FROM ELECCION_LEGISLATIVA el
+    JOIN ELECCION e ON e.id_eleccion = el.id_eleccion
+    UNION
+    SELECT 
+        e.id_eleccion,
+        cp.pregunta as detalle
+    FROM CONSULTA_POPULAR cp
+    JOIN ELECCION e ON e.id_eleccion = cp.id_eleccion
+),
+
+votos_legislativos AS (
+    SELECT 
+        v.id_eleccion,
+        p.nombre || ' ' || p.apellido AS opcion,
+        COUNT(*) AS votos
+    FROM VOTO_ELIJE_CANDIDATO vc
+    JOIN VOTO v ON v.num_voto = vc.num_voto AND v.id_eleccion = vc.id_eleccion
+    JOIN POLITICO p ON vc.dni_politico = p.dni_politico
+    GROUP BY v.id_eleccion, opcion
+),
+
+votos_consulta AS (
+    SELECT 
+        ver.id_eleccion,
+        o.respuesta AS opcion,
+        COUNT(*) AS votos
+    FROM VOTO_ELIJE_OPCION_RESPUESTA ver
+    JOIN OPCION_RESPUESTA o ON ver.id_opcion = o.id_opcion
+    GROUP BY ver.id_eleccion, o.respuesta
+),
+
+votos_totales AS (
+    SELECT * FROM votos_legislativos
+    UNION ALL
+    SELECT * FROM votos_consulta
+),
+
+votos_ranked AS (
+    SELECT 
+        vt.*,
+        te.detalle,
+        RANK() OVER (PARTITION BY vt.id_eleccion ORDER BY votos DESC) AS rnk
+    FROM votos_totales vt
+    JOIN tipo_eleccion te ON te.id_eleccion = vt.id_eleccion
+)
+
+SELECT 
+    id_eleccion,
+    detalle AS tipo_cargo_o_pregunta,
+    opcion AS ganador,
+    votos
+FROM votos_ranked
+WHERE rnk = 1
+-- AND id_eleccion = 'E01' -- Para filtrar por una elección específica
+ORDER BY id_eleccion;
+
+
+/*==============================================================================
  * SECCIÓN 1: ANÁLISIS DE VOTOS POR PARTIDO POLÍTICO
  *==============================================================================*/
 

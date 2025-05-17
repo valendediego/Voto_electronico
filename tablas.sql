@@ -226,7 +226,7 @@ CREATE TABLE POLITICO_ELECCION_PERTENECE_PARTIDO (
     id_partido          VARCHAR(20),
     PRIMARY KEY (dni_politico, id_eleccion),
     FOREIGN KEY (dni_politico, id_eleccion) 
-        REFERENCES POLITICO_PARTICIPA(dni_politico, id_eleccion),
+        REFERENCES CANDIDATO(dni_politico, id_eleccion),
     FOREIGN KEY (id_partido) REFERENCES PARTIDO_POLITICO(id_partido)
 );
 
